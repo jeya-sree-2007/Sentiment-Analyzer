@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sentiment Analyzer</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #80e3ff8b, #ecc779);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      text-align: center;
+      width: 400px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 26px;
+      color: rgb(14, 38, 54);
+    }
+
+    input {
+      width: 80%;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+
+    button {
+      background: #2f0909;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #e64a19;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #2b0a27;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🎭 Sentiment Analyzer</h2>
+    <input type="text" id="userInput" placeholder="Type a sentence..." oninput="capitalizeFirst(this)" />
+    <br>
+    <button onclick="analyze()">Analyze</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    // Auto-capitalize first letter
+    function capitalizeFirst(input) {
+      if (input.value.length > 0) {
+        input.value = input.value.charAt(0).toUpperCase() + input.value.slice(1);
+      }
+    }
+
+    // Call backend API
+    async function analyze() {
+      const text = document.getElementById("userInput").value;
+      if (!text.trim()) {
+        document.getElementById("result").innerText = "⚠️ Please enter a sentence.";
+        return;
+      }
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text })
+        });
+
+        const data = await response.json();
+        document.getElementById("result").innerText = data.description;
+      } catch (error) {
+        document.getElementById("result").innerText = "❌ Error: " + error;
+      }
+    }
+  </script>
+</body>
+</html>
